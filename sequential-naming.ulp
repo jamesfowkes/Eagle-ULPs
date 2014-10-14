@@ -1,0 +1,75 @@
+#usage	 "<b>Sequential group naming</b>\n"
+"<p>"
+"USAGE: RUN sequential-naming.ulp prefix start [suffix]"
+"<br>"
+"Where:"
+"<br>"
+"-prefix is a fixed alphanumeric prefix for the component names"
+"<br>"
+"-start is the number to start naming"
+"<br>"
+"-suffix is an optional fixed alphanumeric suffix for the component names"
+"</p><p>"
+"Renames a group of components with sequential numbering starting at specified value with required prefix and optional suffix."
+"<p>"
+"<author>Author: jamesfowkes@gmail.com</author>"
+
+// THIS PROGRAM IS PROVIDED AS IS AND WITHOUT WARRANTY OF ANY KIND, EXPRESSED OR IMPLIED
+
+void main(void) {
+	
+	if (argc < 3) { exit(EXIT_FAILURE); } // Not enough arguments given, exiting
+	
+	int sheet_has_group = 0;
+	string cmd, s;
+	string help = "Renaming:\n";
+	string new_name;
+
+	string prefix = "";
+	string suffix = "";
+	
+	// argv[1] is the prefix
+	prefix = argv[1];
+	
+	// argv[2] is the start value
+	int value = strtol(argv[2]);
+	
+	// if present, argv[3] is the suffix
+	if (argc >= 4)
+	{	
+		suffix = argv[3];
+	}
+	
+	if (sheet)
+	{
+		sheet(S)
+		{
+			S.instances(I)
+			{
+				if (ingroup(I))
+				{
+					sheet_has_group = 1;
+					
+					sprintf(new_name, "%s%d%s", prefix, value, suffix);
+					
+			        sprintf(s, "NAME %s %s;\n", I.part.name, new_name);
+					cmd += s;
+					
+					sprintf(s, "%s to %s\n", I.part.name, new_name);
+					help += s;
+					
+					value++;
+				}
+			}
+		}
+	}
+	
+	if (sheet_has_group)
+	{
+		int rtn = dlgMessageBox(help, "+Run", "Cancel");
+		if (rtn == 0)
+		{
+			exit(cmd);
+		}
+	}
+}
